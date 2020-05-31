@@ -30,15 +30,17 @@ fn handle_connection(mut stream: TcpStream) {
     
     let content = if path.is_dir() {
         handle_dir(path)
-    } else {
+    } else if path.is_file() {
         handle_file(path)
+    } else {
+        String::from("No content")
     };
 
     println!("{:?}", content);
 
     //fs::read_dir();
 
-    let response = format!("HTTP/1.1 200 OK\r\n\r\n{}", uri);
+    let response = format!("HTTP/1.1 200 OK\r\n\r\n{}", content);
 
     stream.write(response.as_bytes()).unwrap();
     stream.flush().unwrap();
