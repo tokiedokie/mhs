@@ -28,19 +28,17 @@ fn handle_connection(mut stream: TcpStream) {
 
     let path = Path::new(&path_string);
     
-    let content = if path.is_dir() {
-        handle_dir(path)
+    let response = if path.is_dir() {
+        format!("HTTP/1.1 200 OK\r\n\r\n{}", handle_dir(path))
     } else if path.is_file() {
-        handle_file(path)
+        format!("HTTP/1.1 200 OK\r\n\r\n{}", handle_file(path))
     } else {
-        String::from("No content")
+        String::from("HTTP/1.1 404 NOT FOUND\r\n\r\n")
     };
 
-    println!("{:?}", content);
+    println!("{:?}", response);
 
     //fs::read_dir();
-
-    let response = format!("HTTP/1.1 200 OK\r\n\r\n{}", content);
 
     stream.write(response.as_bytes()).unwrap();
     stream.flush().unwrap();
@@ -52,7 +50,7 @@ fn handle_dir(path: &Path) -> String {
     for entry in fs::read_dir(path).unwrap() {
         let entry = entry.unwrap();
         let name = entry.file_name().into_string().unwrap();
-        result.push_str(&name);
+        result.push_str(&format!("{}\r\n", &name));
     }
 
     result
