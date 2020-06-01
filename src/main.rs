@@ -1,7 +1,7 @@
 use std::fs;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 fn main() {
     let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
@@ -21,11 +21,8 @@ fn handle_connection(mut stream: TcpStream) {
     let req = String::from_utf8_lossy(&buffer[..]).to_string();
 
     let uri = req.split(' ').nth(1).unwrap_or_default();
-    println!("{}", &uri);
 
     let path_string = format!(".{}", uri);
-
-    println!("{}", path_string);
 
     let path = Path::new(&path_string);
 
@@ -36,10 +33,6 @@ fn handle_connection(mut stream: TcpStream) {
     } else {
         String::from("HTTP/1.1 404 NOT FOUND\r\n\r\n")
     };
-
-    println!("{:?}", response);
-
-    //fs::read_dir();
 
     stream.write(response.as_bytes()).unwrap();
     stream.flush().unwrap();
@@ -67,9 +60,25 @@ fn handle_dir(path: &Path) -> String {
     for entry in fs::read_dir(path).unwrap() {
         let entry = entry.unwrap();
         let name = entry.file_name().into_string().unwrap();
+        let metadata = entry.metadata().unwrap();
 
         result.push_str("<tr>");
-        result.push_str(&format!("<td><a href=\"{}/{}\">{}</a></td>", &dir_name, &name, &name));
+
+        if metadata.is_dir() {
+            if dir_name == "/" {
+                result.push_str(&format!("<td><a href=\"/{}/\">{}</a></td>", &name, &name));
+            } else {
+                result.push_str(&format!("<td><a href=\"{}/{}/\">{}</a></td>", &dir_name, &name, &name));
+            }
+        } else if metadata.is_file() {
+            if dir_name == "/" {
+                result.push_str(&format!("<td><a href=\"/{}\">{}</a></td>", &name, &name));
+            } else {
+                result.push_str(&format!("<td><a href=\"{}{}\">{}</a></td>", &dir_name, &name, &name));
+            }
+        }
+
+
         result.push_str("</tr>");
     }
 
