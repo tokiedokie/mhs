@@ -20,7 +20,7 @@ fn handle_connection(mut stream: TcpStream) {
 
     let req = String::from_utf8_lossy(&buffer[..]).to_string();
 
-    let uri = req.split(' ').nth(1).unwrap();
+    let uri = req.split(' ').nth(1).unwrap_or_default();
 
     let path_string = format!(".{}", uri);
 
@@ -49,20 +49,25 @@ fn handle_dir(path: &Path) -> String {
 
     result.push_str(&format!(
         "\
-        <head>
-            <title>Index of {}</title>
+        <head>\
+            <title>Index of {}</title>\
         </head>\
     ",
         path.to_string_lossy().to_string().trim_start_matches(".")
     ));
 
-    result.push_str("<table>");
+    result.push_str("<body><table><tbody>");
 
     for entry in fs::read_dir(path).unwrap() {
         let entry = entry.unwrap();
         let name = entry.file_name().into_string().unwrap();
-        result.push_str(&format!("{}\r\n", &name));
+        
+        result.push_str("<tr>");
+        result.push_str(&format!("<td>{}</td>", &name));
+        result.push_str("</tr>");
     }
+
+    result.push_str("</tbody></table></body>");
 
     result
 }
