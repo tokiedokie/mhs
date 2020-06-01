@@ -3,6 +3,8 @@ name = "micro-http-server"
 version = "0.1.8"
 authors = ["tokiedokie <42903136+tokiedokie@users.noreply.github.com>"]
 edition = "2018"
+description = "micro-http-server is http server using in cli"
+license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
