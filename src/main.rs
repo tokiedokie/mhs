@@ -2,9 +2,10 @@ use std::fs;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
 use std::path::Path;
+use std::env;
 
 fn main() {
-    let port = 7878;
+    let port = parse_ages(env::args()).unwrap_or_else(||7878); //7878;
 
     let listener = TcpListener::bind(&format!("127.0.0.1:{}", port)).unwrap();
 
@@ -17,6 +18,11 @@ fn main() {
 
         handle_connection(stream);
     }
+}
+
+fn parse_ages(mut args: env::Args) -> Option<i32> {
+    let port: i32 = args.nth(1)?.parse().ok()?;
+    Some(port)
 }
 
 fn handle_connection(mut stream: TcpStream) {
