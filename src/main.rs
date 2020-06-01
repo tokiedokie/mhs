@@ -63,7 +63,7 @@ fn handle_dir(path: &Path) -> Vec<u8> {
 
     if dir_name != "/" {
         result.push_str(&format!(
-            "<tr><td></td><td><a href=\"{}../\">../</a></td></tr>",
+            "<tr><td><a href=\"{}../\">../</a></td><td></td></tr>",
             dir_name
         ));
     }
@@ -77,17 +77,17 @@ fn handle_dir(path: &Path) -> Vec<u8> {
         result.push_str("<tr>");
 
         if metadata.is_dir() {
-            result.push_str("<td></td>");
             result.push_str(&format!(
                 "<td><a href=\"{}{}/\">{}/</a></td>",
                 &dir_name, &name, &name
             ));
+            result.push_str("<td></td>");
         } else if metadata.is_file() {
-            result.push_str(&format!("<td>{} Bytes</td>", file_size));
             result.push_str(&format!(
                 "<td><a href=\"{}{}\">{}</a></td>",
                 &dir_name, &name, &name
             ));
+            result.push_str(&format!("<td>{} Bytes</td>", file_size));
         }
 
         result.push_str("</tr>");
