@@ -55,7 +55,10 @@ fn handle_dir(path: &Path) -> String {
         &dir_name
     ));
 
-    result.push_str(&format!("<body><h1>Index of {}</h1><table><tbody>", dir_name));
+    result.push_str(&format!(
+        "<body><h1>Index of {}</h1><table><tbody>",
+        dir_name
+    ));
 
     for entry in fs::read_dir(path).unwrap() {
         let entry = entry.unwrap();
@@ -67,12 +70,17 @@ fn handle_dir(path: &Path) -> String {
 
         if metadata.is_dir() {
             result.push_str("<td></td>");
-            result.push_str(&format!("<td><a href=\"{}{}/\">{}</a></td>", &dir_name, &name, &name));
+            result.push_str(&format!(
+                "<td><a href=\"{}{}/\">{}</a></td>",
+                &dir_name, &name, &name
+            ));
         } else if metadata.is_file() {
-            result.push_str(&format!("<td>{} Bytes</td>", file_size));;
-            result.push_str(&format!("<td><a href=\"{}{}\">{}</a></td>", &dir_name, &name, &name));
+            result.push_str(&format!("<td>{} Bytes</td>", file_size));
+            result.push_str(&format!(
+                "<td><a href=\"{}{}\">{}</a></td>",
+                &dir_name, &name, &name
+            ));
         }
-
 
         result.push_str("</tr>");
     }
