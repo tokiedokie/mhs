@@ -10,4 +10,9 @@ edition = "2018"
 lto = true
 panic = 'abort'
 
+[[bin]]
+bench = false
+path = "src/main.rs"
+name = "mhs"
+
 [dependencies]
