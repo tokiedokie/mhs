@@ -65,17 +65,9 @@ fn handle_dir(path: &Path) -> String {
         result.push_str("<tr>");
 
         if metadata.is_dir() {
-            if dir_name == "/" {
-                result.push_str(&format!("<td><a href=\"/{}/\">{}</a></td>", &name, &name));
-            } else {
-                result.push_str(&format!("<td><a href=\"{}/{}/\">{}</a></td>", &dir_name, &name, &name));
-            }
+            result.push_str(&format!("<td><a href=\"{}{}/\">{}</a></td>", &dir_name, &name, &name));
         } else if metadata.is_file() {
-            if dir_name == "/" {
-                result.push_str(&format!("<td><a href=\"/{}\">{}</a></td>", &name, &name));
-            } else {
-                result.push_str(&format!("<td><a href=\"{}{}\">{}</a></td>", &dir_name, &name, &name));
-            }
+            result.push_str(&format!("<td><a href=\"{}{}\">{}</a></td>", &dir_name, &name, &name));
         }
 
 
