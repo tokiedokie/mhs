@@ -1,6 +1,6 @@
 [package]
 name = "mhs"
-version = "0.1.8"
+version = "0.1.9"
 authors = ["tokiedokie <42903136+tokiedokie@users.noreply.github.com>"]
 edition = "2018"
 description = "mhs is http server using in cli"
