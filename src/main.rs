@@ -1,7 +1,7 @@
 use std::fs;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 fn main() {
     let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
