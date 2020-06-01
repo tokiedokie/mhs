@@ -1,5 +1,5 @@
 [package]
-name = "micro-http-server"
+name = "mhs"
 version = "0.1.8"
 authors = ["tokiedokie <42903136+tokiedokie@users.noreply.github.com>"]
 edition = "2018"
@@ -11,10 +11,5 @@ license = "MIT"
 [profile.release]
 lto = true
 panic = 'abort'
-
-[[bin]]
-bench = false
-path = "src/main.rs"
-name = "mhs"
 
 [dependencies]
