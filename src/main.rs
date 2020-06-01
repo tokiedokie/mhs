@@ -26,19 +26,20 @@ fn handle_connection(mut stream: TcpStream) {
 
     let path = Path::new(&path_string);
 
-    let response = if path.is_dir() {
-        format!("HTTP/1.1 200 OK\r\n\r\n{}", handle_dir(path))
+    if path.is_dir() {
+        stream.write(b"HTTP/1.1 200 OK\r\n\r\n").unwrap();
+        stream.write(handle_dir(path).as_slice()).unwrap();
     } else if path.is_file() {
-        format!("HTTP/1.1 200 OK\r\n\r\n{}", handle_file(path))
+        stream.write(b"HTTP/1.1 200 OK\r\n\r\n").unwrap();
+        stream.write(handle_file(path).as_slice()).unwrap();
     } else {
-        String::from("HTTP/1.1 404 NOT FOUND\r\n\r\n")
-    };
+        stream.write(b"HTTP/1.1 404 NOT FOUND\r\n\r\n").unwrap();
+    }
 
-    stream.write(response.as_bytes()).unwrap();
     stream.flush().unwrap();
 }
 
-fn handle_dir(path: &Path) -> String {
+fn handle_dir(path: &Path) -> Vec<u8> {
     let mut result = String::new();
     let dir_name = path
         .to_string_lossy()
@@ -59,6 +60,13 @@ fn handle_dir(path: &Path) -> String {
         "<body><h1>Index of {}</h1><table><tbody>",
         dir_name
     ));
+
+    if dir_name != "/" {
+        result.push_str(&format!(
+            "<tr><td></td><td><a href=\"{}../\">../</a></td></tr>",
+            dir_name
+        ));
+    }
 
     for entry in fs::read_dir(path).unwrap() {
         let entry = entry.unwrap();
@@ -87,9 +95,9 @@ fn handle_dir(path: &Path) -> String {
 
     result.push_str("</tbody></table></body>");
 
-    result
+    result.into_bytes()
 }
 
-fn handle_file(path: &Path) -> String {
-    String::from_utf8(fs::read(path).unwrap()).unwrap()
+fn handle_file(path: &Path) -> Vec<u8> {
+    fs::read(path).unwrap()
 }
