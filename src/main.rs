@@ -71,7 +71,7 @@ fn handle_dir(path: &Path) -> String {
         if metadata.is_dir() {
             result.push_str("<td></td>");
             result.push_str(&format!(
-                "<td><a href=\"{}{}/\">{}</a></td>",
+                "<td><a href=\"{}{}/\">{}/</a></td>",
                 &dir_name, &name, &name
             ));
         } else if metadata.is_file() {
