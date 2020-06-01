@@ -27,7 +27,7 @@ fn handle_connection(mut stream: TcpStream) {
     println!("{}", path_string);
 
     let path = Path::new(&path_string);
-    
+
     let response = if path.is_dir() {
         format!("HTTP/1.1 200 OK\r\n\r\n{}", handle_dir(path))
     } else if path.is_file() {
@@ -46,6 +46,17 @@ fn handle_connection(mut stream: TcpStream) {
 
 fn handle_dir(path: &Path) -> String {
     let mut result = String::new();
+
+    result.push_str(&format!(
+        "\
+        <head>
+            <title>Index of {}</title>
+        </head>\
+    ",
+        path.to_string_lossy().to_string().trim_start_matches(".")
+    ));
+
+    result.push_str("<table>");
 
     for entry in fs::read_dir(path).unwrap() {
         let entry = entry.unwrap();
