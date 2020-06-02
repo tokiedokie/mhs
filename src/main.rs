@@ -1,10 +1,11 @@
 use std::env;
+use std::error::Error;
 use std::fs;
+use std::io;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
 use std::path::Path;
 use std::process;
-use std::error::Error;
 
 fn main() {
     // default port is 7878
@@ -31,7 +32,7 @@ fn parse_ages(mut args: env::Args) -> Option<i32> {
     Some(port)
 }
 
-fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>>{
+fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
     let mut buffer = [0; 512];
 
     stream.read(&mut buffer)?;
@@ -50,7 +51,7 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>>{
         stream.write(handle_dir(path)?.as_slice())?;
     } else if path.is_file() {
         stream.write(b"HTTP/1.1 200 OK\r\n\r\n")?;
-        stream.write(handle_file(path).as_slice())?;
+        stream.write(handle_file(path)?.as_slice())?;
     } else {
         stream.write(b"HTTP/1.1 404 NOT FOUND\r\n\r\n")?;
     }
@@ -119,6 +120,6 @@ fn handle_dir(path: &Path) -> Result<Vec<u8>, Box<dyn Error>> {
     Ok(result.into_bytes())
 }
 
-fn handle_file(path: &Path) -> Vec<u8> {
-    fs::read(path).unwrap()
+fn handle_file(path: &Path) -> Result<Vec<u8>, io::Error> {
+    fs::read(path)
 }
