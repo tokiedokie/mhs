@@ -1,1 +1,3 @@
-# micro-http-server
+# mhs
+
+mhs is http server for cli
