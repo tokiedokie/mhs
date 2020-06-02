@@ -1,13 +1,17 @@
+use std::env;
 use std::fs;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
 use std::path::Path;
-use std::env;
+use std::process;
 
 fn main() {
-    let port = parse_ages(env::args()).unwrap_or_else(||7878); //7878;
+    let port = parse_ages(env::args()).unwrap_or_else(|| 7878); //7878;
 
-    let listener = TcpListener::bind(&format!("127.0.0.1:{}", port)).unwrap();
+    let listener = TcpListener::bind(&format!("127.0.0.1:{}", port)).unwrap_or_else(|_| {
+        eprintln!("Can't open port: {}", port);
+        process::exit(1);
+    });
 
     println!("mhs has started");
     println!("http://127.0.0.1:{}", port);
