@@ -47,7 +47,7 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>>{
 
     if path.is_dir() {
         stream.write(b"HTTP/1.1 200 OK\r\n\r\n")?;
-        stream.write(handle_dir(path).as_slice())?;
+        stream.write(handle_dir(path)?.as_slice())?;
     } else if path.is_file() {
         stream.write(b"HTTP/1.1 200 OK\r\n\r\n")?;
         stream.write(handle_file(path).as_slice())?;
@@ -60,7 +60,7 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>>{
     Ok(())
 }
 
-fn handle_dir(path: &Path) -> Vec<u8> {
+fn handle_dir(path: &Path) -> Result<Vec<u8>, Box<dyn Error>> {
     let mut result = String::new();
     let dir_name = path
         .to_string_lossy()
@@ -89,10 +89,10 @@ fn handle_dir(path: &Path) -> Vec<u8> {
         ));
     }
 
-    for entry in fs::read_dir(path).unwrap() {
-        let entry = entry.unwrap();
+    for entry in fs::read_dir(path)? {
+        let entry = entry?;
         let name = entry.file_name().into_string().unwrap();
-        let metadata = entry.metadata().unwrap();
+        let metadata = entry.metadata()?;
         let file_size = metadata.len();
 
         result.push_str("<tr>");
@@ -116,7 +116,7 @@ fn handle_dir(path: &Path) -> Vec<u8> {
 
     result.push_str("</tbody></table></body>");
 
-    result.into_bytes()
+    Ok(result.into_bytes())
 }
 
 fn handle_file(path: &Path) -> Vec<u8> {
