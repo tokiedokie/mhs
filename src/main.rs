@@ -4,6 +4,7 @@ use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
 use std::path::Path;
 use std::process;
+use std::error::Error;
 
 fn main() {
     // default port is 7878
@@ -21,7 +22,7 @@ fn main() {
     for stream in listener.incoming() {
         let stream = stream.unwrap();
 
-        handle_connection(stream);
+        handle_connection(stream).unwrap();
     }
 }
 
@@ -30,30 +31,33 @@ fn parse_ages(mut args: env::Args) -> Option<i32> {
     Some(port)
 }
 
-fn handle_connection(mut stream: TcpStream) {
+fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>>{
     let mut buffer = [0; 512];
 
-    stream.read(&mut buffer).unwrap();
+    stream.read(&mut buffer)?;
 
     let req = String::from_utf8_lossy(&buffer[..]).to_string();
 
-    let uri = req.split(' ').nth(1).unwrap_or_default();
+    // request uri, default is `/`
+    let uri = req.split(' ').nth(1).unwrap_or("/");
 
     let path_string = format!(".{}", uri);
 
     let path = Path::new(&path_string);
 
     if path.is_dir() {
-        stream.write(b"HTTP/1.1 200 OK\r\n\r\n").unwrap();
-        stream.write(handle_dir(path).as_slice()).unwrap();
+        stream.write(b"HTTP/1.1 200 OK\r\n\r\n")?;
+        stream.write(handle_dir(path).as_slice())?;
     } else if path.is_file() {
-        stream.write(b"HTTP/1.1 200 OK\r\n\r\n").unwrap();
-        stream.write(handle_file(path).as_slice()).unwrap();
+        stream.write(b"HTTP/1.1 200 OK\r\n\r\n")?;
+        stream.write(handle_file(path).as_slice())?;
     } else {
-        stream.write(b"HTTP/1.1 404 NOT FOUND\r\n\r\n").unwrap();
+        stream.write(b"HTTP/1.1 404 NOT FOUND\r\n\r\n")?;
     }
 
-    stream.flush().unwrap();
+    stream.flush()?;
+
+    Ok(())
 }
 
 fn handle_dir(path: &Path) -> Vec<u8> {
