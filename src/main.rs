@@ -39,7 +39,7 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
 
     let req = String::from_utf8_lossy(&buffer[..]).to_string();
 
-    let request_uri = req.split(' ').nth(1).unwrap_or("/");
+    let request_uri = req.split_whitespace().nth(1).unwrap_or("/");
 
     let path_string = format!(".{}", request_uri);
 
