@@ -21,9 +21,15 @@ fn main() {
     println!("http://localhost:{}", port);
 
     for stream in listener.incoming() {
-        let stream = stream.unwrap();
+        let stream = stream.unwrap_or_else(|err| {
+            eprintln!("error: {}", err);
+            process::exit(1);
+        });
 
-        handle_connection(stream).unwrap();
+        handle_connection(stream).unwrap_or_else(|err| {
+            eprintln!("error: {}", err);
+            process::exit(1);
+        });
     }
 }
 
