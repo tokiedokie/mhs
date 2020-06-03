@@ -44,8 +44,8 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
 
     let req = String::from_utf8_lossy(&buffer[..]).to_string();
 
+    println!("{}", req.lines().nth(0).unwrap());
     let request_uri = req.split_whitespace().nth(1).unwrap_or("/");
-    println!("Request URI is \"{}\"", request_uri);
 
     let path_string = format!(".{}", request_uri);
 
@@ -61,8 +61,11 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
         response.extend(handle_file(path)?);
         stream.write_all(response.as_slice())?;
     } else {
-        stream.write_all(b"HTTP/1.1 404 NOT FOUND\r\n\r\n")?;
+        response.extend_from_slice(b"HTTP/1.1 404 NOT FOUND\r\n\r\n");
+        stream.write_all(response.as_slice())?;
     }
+
+    println!("{}", String::from_utf8_lossy(&response).lines().nth(0).unwrap());
 
     stream.flush()?;
 
