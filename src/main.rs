@@ -28,7 +28,6 @@ fn main() {
 
         handle_connection(stream).unwrap_or_else(|err| {
             eprintln!("error: {}", err);
-            process::exit(1);
         });
     }
 }
