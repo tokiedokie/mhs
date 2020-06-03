@@ -87,13 +87,13 @@ fn handle_dir(path: &Path) -> Result<Vec<u8>, Box<dyn Error>> {
 
     result.push_str(&format!(
         "<body><h1>Index of {}</h1><table><tbody>",
-        dir_name
+        &dir_name
     ));
 
     if dir_name != "/" {
         result.push_str(&format!(
             "<tr><td><a href=\"{}../\">../</a></td><td></td></tr>",
-            dir_name
+            &dir_name
         ));
     }
 
