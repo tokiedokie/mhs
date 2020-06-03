@@ -35,7 +35,7 @@ fn parse_ages(mut args: env::Args) -> Option<i32> {
 fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
     let mut buffer = [0; 512];
 
-    stream.read(&mut buffer)?;
+    stream.read_exact(&mut buffer)?;
 
     let req = String::from_utf8_lossy(&buffer[..]).to_string();
 
@@ -65,7 +65,7 @@ fn handle_dir(path: &Path) -> Result<Vec<u8>, Box<dyn Error>> {
     let dir_name = path
         .to_string_lossy()
         .to_string()
-        .trim_start_matches(".")
+        .trim_start_matches('.')
         .to_string();
 
     result.push_str(&format!(
