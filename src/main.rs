@@ -76,17 +76,16 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
 }
 
 fn parse_uri(request: String) -> (String, String) {
-    let uri: Vec<String> = request
+    let uri: Vec<&str> = request
         .split_whitespace()
         .nth(1)
         .unwrap_or("/")
         .split('?')
-        .map(|string| String::from(string))
         .collect();
 
     (
-        uri.get(0).unwrap().to_owned(),
-        uri.get(1).unwrap_or(&String::new()).to_owned(),
+        String::from(uri.get(0).unwrap().to_owned()),
+        String::from(uri.get(1).unwrap_or(&"").to_owned()),
     )
 }
 
