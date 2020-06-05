@@ -125,9 +125,6 @@ fn handle_dir(path: &Path) -> Result<Vec<u8>, Box<dyn Error>> {
         let metadata = entry.metadata()?;
         let file_size = metadata.len();
 
-        println!("{:?}", name.as_bytes());
-        println!("{:?}", String::from_utf8(name.as_bytes().to_owned()));
-
         result.push_str("<tr>");
 
         if metadata.is_dir() {
