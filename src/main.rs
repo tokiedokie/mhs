@@ -89,15 +89,59 @@ fn parse_uri(request: String) -> (String, String) {
     )
 }
 
+use std::str::Chars;
+struct PercentDecode<'a> {
+    chars: Chars<'a>,
+}
+
+impl<'a> Iterator for PercentDecode<'a> {
+    type Item = char;
+
+    fn next(&mut self) -> Option<char> {
+        self.chars.next().map(|char| {
+            if char == '%' {
+                let clone_bytes = &mut self.chars.clone();
+                let h = clone_bytes.next().unwrap_or_default().to_digit(16).unwrap_or_default() as u8;
+                let l = clone_bytes.next().unwrap_or_default().to_digit(16).unwrap_or_default() as u8;
+                char::from(h * 0x10 + l)
+            } else {
+                char
+            }
+        })
+    }
+}
+
 fn percent_decode(input: &str) -> String {
-    let byte_array: Vec<u8> = input
-        .split('%')
-        .filter_map(|s| u8::from_str_radix(s, 16).ok())
-        .collect();
+    /*
+    let chars: Vec<char> = PercentDecode {
+        chars: input.chars(),
+    }.collect();
 
-    let decoded = String::from_utf8(byte_array).unwrap();
+    println!("{:?}", chars);
+    */
 
-    decoded
+    let mut chars = input.chars();
+
+    let mut vec_char: Vec<char> = Vec::new();
+    loop {
+        match chars.next() {
+            Some(char) => {
+                if char == '%' {
+                    let h = chars.next().unwrap_or_default().to_digit(16).unwrap_or_default() as u8;
+                    let l = chars.next().unwrap_or_default().to_digit(16).unwrap_or_default() as u8;
+                    vec_char.push(char::from(h * 0x10 + l));
+                } else {
+                    vec_char.push(char);
+                }
+            },
+            None => {
+                break;
+            },
+        }
+    }
+
+    let result: String = vec_char.iter().collect();
+    result
 }
 
 fn handle_dir(path: &Path) -> Result<Vec<u8>, Box<dyn Error>> {
@@ -172,6 +216,14 @@ mod test {
     fn test_percent_decode() {
         let expect = String::from(" !\"#$%");
         let actual = percent_decode("%20%21%22%23%24%25");
+
+        assert_eq!(expect, actual);
+    }
+
+    #[test]
+    fn test_percent_decode_mix_ascii() {
+        let expect = String::from("!1#3");
+        let actual = percent_decode("%211%233");
 
         assert_eq!(expect, actual);
     }
