@@ -92,8 +92,7 @@ fn parse_uri(request: String) -> (String, String) {
 fn percent_decode(input: &str) -> String {
     let byte_array: Vec<u8> = input
         .split('%')
-        .filter(|str| !str.is_empty() )
-        .map(|s| u8::from_str_radix(s, 16).unwrap())
+        .filter_map(|s| u8::from_str_radix(s, 16).ok())
         .collect();
 
     let decoded = String::from_utf8(byte_array).unwrap();
