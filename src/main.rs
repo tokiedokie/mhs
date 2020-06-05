@@ -101,6 +101,7 @@ fn handle_dir(path: &Path) -> Result<Vec<u8>, Box<dyn Error>> {
         "\
         <head>\
             <title>Index of {}</title>\
+            <meta charset=\"utf-8\" />\
         </head>\
     ",
         &dir_name
@@ -123,6 +124,9 @@ fn handle_dir(path: &Path) -> Result<Vec<u8>, Box<dyn Error>> {
         let name = entry.file_name().into_string().unwrap();
         let metadata = entry.metadata()?;
         let file_size = metadata.len();
+
+        println!("{:?}", name.as_bytes());
+        println!("{:?}", String::from_utf8(name.as_bytes().to_owned()));
 
         result.push_str("<tr>");
 
