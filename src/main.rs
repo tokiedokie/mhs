@@ -89,6 +89,10 @@ fn parse_uri(request: String) -> (String, String) {
     )
 }
 
+fn percent_decode(input: &str) -> String {
+    String::new()
+}
+
 fn handle_dir(path: &Path) -> Result<Vec<u8>, Box<dyn Error>> {
     let mut result = String::new();
     let dir_name = path
@@ -151,4 +155,17 @@ fn handle_dir(path: &Path) -> Result<Vec<u8>, Box<dyn Error>> {
 
 fn handle_file(path: &Path) -> Result<Vec<u8>, io::Error> {
     fs::read(path)
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_percent_decode() {
+        let expect = String::from("テスト");
+        let actual = percent_decode("%E3%83%86%E3%82%B9%E3%83%88");
+
+        assert_eq!(expect, actual);
+    }
 }
