@@ -112,14 +112,6 @@ impl<'a> Iterator for PercentDecode<'a> {
 }
 
 fn percent_decode(input: &str) -> String {
-    /*
-    let chars: Vec<char> = PercentDecode {
-        chars: input.chars(),
-    }.collect();
-
-    println!("{:?}", chars);
-    */
-
     let mut chars = input.chars();
 
     let mut vec_char: Vec<char> = Vec::new();
