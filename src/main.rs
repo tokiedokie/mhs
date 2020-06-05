@@ -171,8 +171,8 @@ mod test {
 
     #[test]
     fn test_percent_decode() {
-        let expect = String::from("テスト");
-        let actual = percent_decode("%E3%83%86%E3%82%B9%E3%83%88");
+        let expect = String::from("!\"#$%");
+        let actual = percent_decode("%21%22%23%24%25");
 
         assert_eq!(expect, actual);
     }
