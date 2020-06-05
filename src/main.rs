@@ -45,7 +45,8 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
     let req = String::from_utf8_lossy(&buffer[..]).to_string();
 
     println!("\n{}", req.lines().nth(0).unwrap());
-    let request_uri = req.split_whitespace().nth(1).unwrap_or("/");
+    let (request_uri, _) = parse_uri(req);
+    // let request_uri = req.split_whitespace().nth(1).unwrap_or("/");
 
     let path_string = format!(".{}", request_uri);
 
@@ -65,11 +66,29 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
         stream.write_all(response.as_slice())?;
     }
 
-    println!("{}", String::from_utf8_lossy(&response).lines().nth(0).unwrap());
+    println!(
+        "{}",
+        String::from_utf8_lossy(&response).lines().nth(0).unwrap()
+    );
 
     stream.flush()?;
 
     Ok(())
+}
+
+fn parse_uri(request: String) -> (String, String) {
+    let uri: Vec<String> = request
+        .split_whitespace()
+        .nth(1)
+        .unwrap_or("/")
+        .split('?')
+        .map(|string| String::from(string))
+        .collect();
+
+    (
+        uri.get(0).unwrap().to_owned(),
+        uri.get(1).unwrap_or(&String::new()).to_owned(),
+    )
 }
 
 fn handle_dir(path: &Path) -> Result<Vec<u8>, Box<dyn Error>> {
