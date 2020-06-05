@@ -89,28 +89,6 @@ fn parse_uri(request: String) -> (String, String) {
     )
 }
 
-use std::str::Chars;
-struct PercentDecode<'a> {
-    chars: Chars<'a>,
-}
-
-impl<'a> Iterator for PercentDecode<'a> {
-    type Item = char;
-
-    fn next(&mut self) -> Option<char> {
-        self.chars.next().map(|char| {
-            if char == '%' {
-                let clone_bytes = &mut self.chars.clone();
-                let h = clone_bytes.next().unwrap_or_default().to_digit(16).unwrap_or_default() as u8;
-                let l = clone_bytes.next().unwrap_or_default().to_digit(16).unwrap_or_default() as u8;
-                char::from(h * 0x10 + l)
-            } else {
-                char
-            }
-        })
-    }
-}
-
 fn percent_decode(input: &str) -> String {
     let mut chars = input.chars();
 
