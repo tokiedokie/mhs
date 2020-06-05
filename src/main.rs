@@ -46,7 +46,6 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
 
     println!("\n{}", req.lines().nth(0).unwrap());
     let (request_uri, _) = parse_uri(req);
-    // let request_uri = req.split_whitespace().nth(1).unwrap_or("/");
 
     let path_string = format!(".{}", request_uri);
 
