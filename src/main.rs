@@ -53,16 +53,12 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
 
     let response: Vec<u8> = if path.is_dir() {
         let mut buf: Vec<u8> = Vec::new();
-        buf.extend_from_slice(
-            b"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n",
-        );
+        buf.extend_from_slice(b"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n");
         buf.extend(handle_dir(path)?);
         buf
     } else if path.is_file() {
         let mut buf: Vec<u8> = Vec::new();
-        buf.extend_from_slice(
-            b"HTTP/1.1 200 OK\r\nContent-Type: text/text; charset=UTF-8\r\n\r\n",
-        );
+        buf.extend_from_slice(b"HTTP/1.1 200 OK\r\nContent-Type: text/text; charset=UTF-8\r\n\r\n");
         buf.extend(handle_file(path)?);
         buf
     } else {
