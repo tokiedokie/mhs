@@ -45,7 +45,7 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
     let req = String::from_utf8_lossy(&buffer[..]).to_string();
 
     println!("\n{}", req.lines().next().unwrap_or_default());
-    let (request_uri, _) = parse_uri(req);
+    let (request_uri, _) = parse_request(req);
 
     let path_string = format!(".{}", request_uri);
 
@@ -80,7 +80,12 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn parse_uri(request: String) -> (String, String) {
+/**
+parse http request
+
+returns (uri, query)
+*/
+fn parse_request(request: String) -> (String, String) {
     let request_uri: Vec<&str> = request
         .split_whitespace()
         .nth(1)
