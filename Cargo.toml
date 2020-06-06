@@ -1,6 +1,6 @@
 [package]
 name = "mhs"
-version = "0.4.1"
+version = "0.4.2"
 authors = ["tokiedokie <42903136+tokiedokie@users.noreply.github.com>"]
 edition = "2018"
 description = "mhs is http server using in cli"
@@ -8,6 +8,8 @@ readme = "README.md"
 homepage = "https://github.com/tokiedokie/mhs"
 repository = "https://github.com/tokiedokie/mhs"
 license = "MIT"
+categories = ["command-line-utilities"]
+include = ["src/", "LICENSE", "README.md"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
