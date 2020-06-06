@@ -189,17 +189,17 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_percent_decode_only_ascii() {
-        let expect = String::from("abc");
-        let actual = percent_decode("abc");
+    fn test_percent_decode() {
+        let expect = String::from(" !\"#$%");
+        let actual = percent_decode("%20%21%22%23%24%25");
 
         assert_eq!(expect, actual);
     }
 
     #[test]
-    fn test_percent_decode() {
-        let expect = String::from(" !\"#$%");
-        let actual = percent_decode("%20%21%22%23%24%25");
+    fn test_percent_decode_only_ascii() {
+        let expect = String::from("abc");
+        let actual = percent_decode("abc");
 
         assert_eq!(expect, actual);
     }
