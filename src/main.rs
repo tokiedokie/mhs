@@ -53,11 +53,15 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
 
     let mut response: Vec<u8> = Vec::new();
     if path.is_dir() {
-        response.extend_from_slice(b"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n");
+        response.extend_from_slice(
+            b"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n",
+        );
         response.extend(handle_dir(path)?);
         stream.write_all(response.as_slice())?;
     } else if path.is_file() {
-        response.extend_from_slice(b"HTTP/1.1 200 OK\r\nContent-Type: text/text; charset=UTF-8\r\n\r\n");
+        response.extend_from_slice(
+            b"HTTP/1.1 200 OK\r\nContent-Type: text/text; charset=UTF-8\r\n\r\n",
+        );
         response.extend(handle_file(path)?);
         stream.write_all(response.as_slice())?;
     } else {
@@ -82,7 +86,7 @@ fn parse_uri(request: String) -> (String, String) {
         .unwrap_or("/")
         .split('?')
         .collect();
-    
+
     let uri = percent_decode(request_uri.get(0).unwrap());
 
     (
@@ -99,17 +103,25 @@ fn percent_decode(input: &str) -> String {
         match chars.next() {
             Some(char) => {
                 if char == '%' {
-                    let h = chars.next().unwrap_or_default().to_digit(16).unwrap_or_default() as u8;
-                    let l = chars.next().unwrap_or_default().to_digit(16).unwrap_or_default() as u8;
+                    let h = chars
+                        .next()
+                        .unwrap_or_default()
+                        .to_digit(16)
+                        .unwrap_or_default() as u8;
+                    let l = chars
+                        .next()
+                        .unwrap_or_default()
+                        .to_digit(16)
+                        .unwrap_or_default() as u8;
                     bytes.push(h * 0x10 + l);
                 } else {
                     bytes.push(char as u8);
                     //bytes.push(char.to_digit(16).unwrap() as u8)
                 }
-            },
+            }
             None => {
                 break;
-            },
+            }
         }
     }
 
