@@ -76,32 +76,35 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
 }
 
 fn parse_uri(request: String) -> (String, String) {
-    let uri: Vec<&str> = request
+    let request_uri: Vec<&str> = request
         .split_whitespace()
         .nth(1)
         .unwrap_or("/")
         .split('?')
         .collect();
+    
+    let uri = percent_decode(request_uri.get(0).unwrap());
 
     (
-        String::from(uri.get(0).unwrap().to_owned()),
-        String::from(uri.get(1).unwrap_or(&"").to_owned()),
+        uri,
+        String::from(request_uri.get(1).unwrap_or(&"").to_owned()),
     )
 }
 
 fn percent_decode(input: &str) -> String {
     let mut chars = input.chars();
 
-    let mut vec_char: Vec<char> = Vec::new();
+    let mut bytes: Vec<u8> = Vec::new();
     loop {
         match chars.next() {
             Some(char) => {
                 if char == '%' {
                     let h = chars.next().unwrap_or_default().to_digit(16).unwrap_or_default() as u8;
                     let l = chars.next().unwrap_or_default().to_digit(16).unwrap_or_default() as u8;
-                    vec_char.push(char::from(h * 0x10 + l));
+                    bytes.push(h * 0x10 + l);
                 } else {
-                    vec_char.push(char);
+                    bytes.push(char as u8);
+                    //bytes.push(char.to_digit(16).unwrap() as u8)
                 }
             },
             None => {
@@ -110,8 +113,7 @@ fn percent_decode(input: &str) -> String {
         }
     }
 
-    let result: String = vec_char.iter().collect();
-    result
+    String::from_utf8(bytes).unwrap()
 }
 
 fn handle_dir(path: &Path) -> Result<Vec<u8>, Box<dyn Error>> {
