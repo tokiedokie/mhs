@@ -53,11 +53,11 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
 
     let mut response: Vec<u8> = Vec::new();
     if path.is_dir() {
-        response.extend_from_slice(b"HTTP/1.1 200 OK\r\n\r\n");
+        response.extend_from_slice(b"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n");
         response.extend(handle_dir(path)?);
         stream.write_all(response.as_slice())?;
     } else if path.is_file() {
-        response.extend_from_slice(b"HTTP/1.1 200 OK\r\n\r\n");
+        response.extend_from_slice(b"HTTP/1.1 200 OK\r\nContent-Type: text/text; charset=UTF-8\r\n\r\n");
         response.extend(handle_file(path)?);
         stream.write_all(response.as_slice())?;
     } else {
@@ -128,7 +128,6 @@ fn handle_dir(path: &Path) -> Result<Vec<u8>, Box<dyn Error>> {
         "\
         <head>\
             <title>Index of {}</title>\
-            <meta charset=\"utf-8\" />\
         </head>\
     ",
         &dir_name
