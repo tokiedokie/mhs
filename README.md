@@ -6,14 +6,20 @@
 
 mhs is http server for cli like `http-server` for nodejs or `http.server` for python
 
+## Installation
+
+```sh
+cargo install mhs
+```
+
 ## Usage
 
-```
+```sh
 mhs
 ```
 
 or
 
-```
+```sh
 mhs <port>
 ```
