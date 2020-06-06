@@ -51,23 +51,25 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
 
     let path = Path::new(&path_string);
 
-    let mut response: Vec<u8> = Vec::new();
-    if path.is_dir() {
-        response.extend_from_slice(
+    let response: Vec<u8> = if path.is_dir() {
+        let mut buf: Vec<u8> = Vec::new();
+        buf.extend_from_slice(
             b"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n",
         );
-        response.extend(handle_dir(path)?);
-        stream.write_all(response.as_slice())?;
+        buf.extend(handle_dir(path)?);
+        buf
     } else if path.is_file() {
-        response.extend_from_slice(
+        let mut buf: Vec<u8> = Vec::new();
+        buf.extend_from_slice(
             b"HTTP/1.1 200 OK\r\nContent-Type: text/text; charset=UTF-8\r\n\r\n",
         );
-        response.extend(handle_file(path)?);
-        stream.write_all(response.as_slice())?;
+        buf.extend(handle_file(path)?);
+        buf
     } else {
-        response.extend_from_slice(b"HTTP/1.1 404 NOT FOUND\r\n\r\n");
-        stream.write_all(response.as_slice())?;
-    }
+        b"HTTP/1.1 404 NOT FOUND\r\n\r\n".to_vec()
+    };
+
+    stream.write_all(&response)?;
 
     println!(
         "{}",
