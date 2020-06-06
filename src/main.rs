@@ -71,7 +71,10 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
 
     println!(
         "{}",
-        String::from_utf8_lossy(&response).lines().next().unwrap_or_default()
+        String::from_utf8_lossy(&response)
+            .lines()
+            .next()
+            .unwrap_or_default()
     );
 
     stream.flush()?;
