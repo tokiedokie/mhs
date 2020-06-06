@@ -113,7 +113,7 @@ fn percent_decode(input: &str) -> String {
         }
     }
 
-    String::from_utf8(bytes).unwrap()
+    String::from_utf8(bytes).unwrap_or_default()
 }
 
 fn handle_dir(path: &Path) -> Result<Vec<u8>, Box<dyn Error>> {
