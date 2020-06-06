@@ -212,4 +212,14 @@ mod test {
 
         assert_eq!(expect, actual);
     }
+
+    #[test]
+    fn test_handle_file() {
+        let path = Path::new(".gitignore");
+        
+        let expected = fs::read(path).unwrap_or_default();
+        let actual = handle_file(path).unwrap_or_default();
+
+        assert_eq!(expected, actual);
+    }
 }
