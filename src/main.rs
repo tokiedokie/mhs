@@ -44,7 +44,7 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
 
     let req = String::from_utf8_lossy(&buffer[..]).to_string();
 
-    println!("\n{}", req.lines().nth(0).unwrap());
+    println!("\n{}", req.lines().next().unwrap_or_default());
     let (request_uri, _) = parse_uri(req);
 
     let path_string = format!(".{}", request_uri);
@@ -71,7 +71,7 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn Error>> {
 
     println!(
         "{}",
-        String::from_utf8_lossy(&response).lines().nth(0).unwrap()
+        String::from_utf8_lossy(&response).lines().next().unwrap_or_default()
     );
 
     stream.flush()?;
@@ -99,29 +99,22 @@ fn percent_decode(input: &str) -> String {
     let mut chars = input.chars();
 
     let mut bytes: Vec<u8> = Vec::new();
-    loop {
-        match chars.next() {
-            Some(char) => {
-                if char == '%' {
-                    let h = chars
-                        .next()
-                        .unwrap_or_default()
-                        .to_digit(16)
-                        .unwrap_or_default() as u8;
-                    let l = chars
-                        .next()
-                        .unwrap_or_default()
-                        .to_digit(16)
-                        .unwrap_or_default() as u8;
-                    bytes.push(h * 0x10 + l);
-                } else {
-                    bytes.push(char as u8);
-                    //bytes.push(char.to_digit(16).unwrap() as u8)
-                }
-            }
-            None => {
-                break;
-            }
+
+    while let Some(char) = chars.next() {
+        if char == '%' {
+            let h = chars
+                .next()
+                .unwrap_or_default()
+                .to_digit(16)
+                .unwrap_or_default() as u8;
+            let l = chars
+                .next()
+                .unwrap_or_default()
+                .to_digit(16)
+                .unwrap_or_default() as u8;
+            bytes.push(h * 0x10 + l);
+        } else {
+            bytes.push(char as u8);
         }
     }
 
