@@ -3,13 +3,6 @@ name: Build
 on: [push, pull_request]
 
 jobs:
-  format:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Format
-      run: cargo fmt -- --check
-  
   test:
     strategy:
       matrix:
